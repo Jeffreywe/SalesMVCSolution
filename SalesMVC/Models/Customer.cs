@@ -17,5 +17,7 @@ namespace SalesMVC.Models {
         [Required, StringLength(2)]
         public string StateCode { get; set; } = "OH";
 
+        public virtual IEnumerable<Order> Orders { get; set; }
+        //public virtual IEnumerable<Orderline> Orderlines { get; set; } //added
     }
 }

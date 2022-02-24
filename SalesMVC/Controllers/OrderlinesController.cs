@@ -10,31 +10,38 @@ using SalesMVC.Models;
 
 namespace SalesMVC.Controllers
 {
-    public class OrdersController : Controller
+    public class OrderlinesController : Controller
     {
         private readonly SalesMVCContext _context;
 
-        public OrdersController(SalesMVCContext context)
+        public OrderlinesController(SalesMVCContext context)
         {
             _context = context;
         }
 
-        public async Task<IActionResult> Lines(int? id) { // page name has to be the same as the method name for the method to be called
-            var order = await _context.Orders
-                                        .Include(x => x.Customer) //Includes these types to the Lines view
-                                        .Include(x => x.Orderlines)
-                                        .SingleOrDefaultAsync(x => x.Id == id);
-            return View(order);
+        // Recalculate ordertotal
+        private async Task<IActionResult> RecalculateOrderTotal(int orderId) {
+            var order = _context.Orders.Find(orderId);
+
+            order.Total = (from ol in _context.Orderlines
+                           join o in _context.Orders
+                           on ol.OrderId equals o.Id
+                           where ol.OrderId == orderId
+                           select new {
+                               LineTotal = ol.Quantity * ol.Price
+                           }).Sum(x => x.LineTotal);
+            await _context.SaveChangesAsync();
+            return Ok();
         }
 
-        // GET: Orders
+        // GET: Orderlines
         public async Task<IActionResult> Index()
         {
-            var salesMVCContext = _context.Orders.Include(o => o.Customer);
+            var salesMVCContext = _context.Orderlines.Include(o => o.Order);
             return View(await salesMVCContext.ToListAsync());
         }
 
-        // GET: Orders/Details/5
+        // GET: Orderlines/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -42,42 +49,43 @@ namespace SalesMVC.Controllers
                 return NotFound();
             }
 
-            var order = await _context.Orders
-                .Include(o => o.Customer)
+            var orderline = await _context.Orderlines
+                .Include(o => o.Order)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (order == null)
+            if (orderline == null)
             {
                 return NotFound();
             }
 
-            return View(order);
+            return View(orderline);
         }
 
-        // GET: Orders/Create
+        // GET: Orderlines/Create
         public IActionResult Create()
         {
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Name");
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Description");
             return View();
         }
 
-        // POST: Orders/Create
+        // POST: Orderlines/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description,Total,CustomerId")] Order order)
+        public async Task<IActionResult> Create([Bind("Id,Product,Quantity,Price,LineTotal,OrderId")] Orderline orderline)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(order);
+                _context.Add(orderline);
                 await _context.SaveChangesAsync();
+                await RecalculateOrderTotal(orderline.OrderId);//recalc
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Name", order.CustomerId);
-            return View(order);
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Description", orderline.OrderId);
+            return View(orderline);
         }
 
-        // GET: Orders/Edit/5
+        // GET: Orderlines/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -85,23 +93,23 @@ namespace SalesMVC.Controllers
                 return NotFound();
             }
 
-            var order = await _context.Orders.FindAsync(id);
-            if (order == null)
+            var orderline = await _context.Orderlines.FindAsync(id);
+            if (orderline == null)
             {
                 return NotFound();
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Name", order.CustomerId);
-            return View(order);
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Description", orderline.OrderId);
+            return View(orderline);
         }
 
-        // POST: Orders/Edit/5
+        // POST: Orderlines/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Description,Total,CustomerId")] Order order)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Product,Quantity,Price,LineTotal,OrderId")] Orderline orderline)
         {
-            if (id != order.Id)
+            if (id != orderline.Id)
             {
                 return NotFound();
             }
@@ -110,12 +118,13 @@ namespace SalesMVC.Controllers
             {
                 try
                 {
-                    _context.Update(order);
+                    _context.Update(orderline);
                     await _context.SaveChangesAsync();
+                    await RecalculateOrderTotal(orderline.OrderId);//recalc
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OrderExists(order.Id))
+                    if (!OrderlineExists(orderline.Id))
                     {
                         return NotFound();
                     }
@@ -126,11 +135,11 @@ namespace SalesMVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Name", order.CustomerId);
-            return View(order);
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Description", orderline.OrderId);
+            return View(orderline);
         }
 
-        // GET: Orders/Delete/5
+        // GET: Orderlines/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -138,31 +147,32 @@ namespace SalesMVC.Controllers
                 return NotFound();
             }
 
-            var order = await _context.Orders
-                .Include(o => o.Customer)
+            var orderline = await _context.Orderlines
+                .Include(o => o.Order)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (order == null)
+            if (orderline == null)
             {
                 return NotFound();
             }
 
-            return View(order);
+            return View(orderline);
         }
 
-        // POST: Orders/Delete/5
+        // POST: Orderlines/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var order = await _context.Orders.FindAsync(id);
-            _context.Orders.Remove(order);
+            var orderline = await _context.Orderlines.FindAsync(id);
+            _context.Orderlines.Remove(orderline);
             await _context.SaveChangesAsync();
+            await RecalculateOrderTotal(orderline.OrderId);//recalc
             return RedirectToAction(nameof(Index));
         }
 
-        private bool OrderExists(int id)
+        private bool OrderlineExists(int id)
         {
-            return _context.Orders.Any(e => e.Id == id);
+            return _context.Orderlines.Any(e => e.Id == id);
         }
     }
 }

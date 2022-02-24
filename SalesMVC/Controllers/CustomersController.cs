@@ -19,6 +19,14 @@ namespace SalesMVC.Controllers
             _context = context;
         }
 
+        public async Task<IActionResult> Orders(int? id) {
+            var order = await _context.Customers
+                                        .Include(x => x.Orders)
+                                        //.Include(x => x.Orderlines)
+                                        .SingleOrDefaultAsync(x => x.Id == id);
+            return View(order);
+        }
+
         // GET: Customers
         public async Task<IActionResult> Index()
         {

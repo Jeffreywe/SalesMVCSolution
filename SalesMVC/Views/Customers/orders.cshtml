@@ -1,0 +1,75 @@
+﻿@model SalesMVC.Models.Customer;
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<h1>Orders</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(x => x.Id)</th>
+            <th>@Html.DisplayNameFor(x => x.Name)</th>
+            <th>@Html.DisplayNameFor(x => x.Active)</th>
+            <th>@Html.DisplayNameFor(x => x.Sales)</th>
+            <th>@Html.DisplayNameFor(x => x.StateCode)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Html.DisplayNameFor(x => x.Id)</td>
+            <td>@Html.DisplayNameFor(x => x.Name)</td>
+            <td>@Html.DisplayNameFor(x => x.Active)</td>
+            <td>@Html.DisplayNameFor(x => x.Sales)</td>
+            <td>@Html.DisplayNameFor(x => x.StateCode)</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Description</th>
+            <th>Total</th>
+            <th>Customer</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var line in Model.Orders) {
+        <tr>
+            <td>@Html.DisplayFor(x => line.Id)</td>
+            <td>@Html.DisplayFor(x => line.Description)</td>
+            <td>@line.Total.ToString("c")</td>
+            <td>@line.Customer.Name</td>
+        </tr>
+         }
+    </tbody>
+</table>
+@*
+<hr />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Line Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var line in @Model.Orderlines) {
+            <tr>
+                <td>@Html.DisplayFor(x => line.Id)</td>
+                <td>@Html.DisplayFor(x => line.Product)</td>
+                <td>@Html.DisplayFor(x => line.Quantity)</td>
+                <td>@line.Price.ToString("c")</td>
+                <td>@line.LineTotal.ToString("c")</td>
+            </tr>
+        }
+    </tbody>
+</table>*@

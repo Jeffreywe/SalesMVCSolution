@@ -1,0 +1,51 @@
+﻿@model SalesMVC.Models.Order;
+    @*data passed in this view is an instance of an Order*@
+@{
+    ViewData["Title"] = "Order Lines"; // master page takes whatevers in the title and puts it on the tab
+}
+
+<h1>Order Lines</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(x => x.Id)</th>
+            <th>@Html.DisplayNameFor(x => x.Description)</th>
+            <th>@Html.DisplayNameFor(x => x.Total)</th>
+            <th>@Html.DisplayNameFor(x => x.Customer)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Html.DisplayFor(x => x.Id)</td>
+            <td>@Html.DisplayFor(x => x.Description)</td>
+            <td>@Html.DisplayFor(x => x.Total)</td>
+            <td>@Html.DisplayFor(x => x.Customer.Name)</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr /> @*puts a horizontal line across the two tables*@
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Line Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var line in @Model.Orderlines) {
+        <tr>
+            <td>@Html.DisplayFor(x => line.Id)</td>
+            <td>@Html.DisplayFor(x => line.Product)</td>
+            <td>@Html.DisplayFor(x => line.Quantity)</td>
+            <td>@line.Price.ToString("c")</td>
+            <td>@line.LineTotal.ToString("c")</td>
+        </tr>
+         }
+    </tbody>
+</table>
