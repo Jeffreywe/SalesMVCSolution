@@ -1,18 +1,21 @@
 ﻿@model IEnumerable<SalesMVC.Models.Customer>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Customers";
 }
 
-<h1>Index</h1>
+<h1>Customer List</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
 <table class="table">
-    <thead>
-        <tr>
+    <thead> @*heading body*@
+        <tr> @*represents headings, just like textfiles*@
             <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>@*represents one columns*@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
@@ -24,12 +27,15 @@
             <th>
                 @Html.DisplayNameFor(model => model.StateCode)
             </th>
-            <th></th>
+            <th>Actions</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody> @*body that fills the column headings*@
 @foreach (var item in Model) {
         <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id) @*displayfor gets the data, doesnt care about the name unlike displaynamefor*@
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
@@ -37,7 +43,7 @@
                 @Html.DisplayFor(modelItem => item.Active)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Sales)
+                @item.Sales.ToString("C")
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.StateCode)

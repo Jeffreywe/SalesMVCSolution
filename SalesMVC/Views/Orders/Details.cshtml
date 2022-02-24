@@ -1,13 +1,13 @@
-﻿@model SalesMVC.Models.Customer
+﻿@model SalesMVC.Models.Order
 
 @{
-    ViewData["Title"] = "Customer";
+    ViewData["Title"] = "Orders";
 }
 
 <h1>Details</h1>
 
 <div>
-    <h4>Customer Detail</h4>
+    <h4>Order Details</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -17,28 +17,22 @@
             @Html.DisplayFor(model => model.Id)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.Description)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
+            @Html.DisplayFor(model => model.Description)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Active)
+            @Html.DisplayNameFor(model => model.Total)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Active)
+            @Html.DisplayFor(model => model.Total)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Sales)
+            @Html.DisplayNameFor(model => model.Customer)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Sales)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.StateCode)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.StateCode)
+            @Html.DisplayFor(model => model.Customer.Name)
         </dd>
     </dl>
 </div>

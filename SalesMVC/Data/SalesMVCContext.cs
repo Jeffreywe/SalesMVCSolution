@@ -11,12 +11,15 @@ namespace SalesMVC.Data
     {
 
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<Order> Orders { get; set; }
+
         public SalesMVCContext (DbContextOptions<SalesMVCContext> options)
             : base(options)
         {
         }
 
-        protected override void OnModelCreating(ModelBuilder builder) { }
-        
+        protected override void OnModelCreating(ModelBuilder builder) { 
+            
+        }
     }
 }
